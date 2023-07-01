@@ -40,7 +40,7 @@ ROOT_DIR="/tmp/patchmanager"
 # Applications
 PATCH_EXEC="/usr/bin/patch"
 
-  PATCH_FILE="$PATCH_PATH"
+PATCH_FILE="$PATCH_PATH"
 
 #
 # Here starts the part where all the magic happens
