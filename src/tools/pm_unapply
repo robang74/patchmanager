@@ -77,15 +77,14 @@ test_if_applied() {
 }
 
 remove_text_patch() {
-  if [ -f "$PATCH_FILE" ]; then
-    log
-    log "----------------------------------"
-    log "Reverting (unapplying) applied patch file"
-    log "----------------------------------"
-    log
+  test -f "$PATCH_FILE" || return 1
+  log
+  log "----------------------------------"
+  log "Reverting (unapplying) applied patch file"
+  log "----------------------------------"
+  log
 
-    $PATCH_EXEC -R -p 1 -d "$ROOT_DIR" --no-backup-if-mismatch < "$PATCH_FILE" 2>&1 | tee -a "$PM_LOG_FILE"
-  fi
+  $PATCH_EXEC -R -p 1 -d "$ROOT_DIR" --no-backup-if-mismatch < "$PATCH_FILE" 2>&1 | tee -a "$PM_LOG_FILE"
 }
 
 clean_backup_patch() {
