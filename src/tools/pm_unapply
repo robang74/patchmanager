@@ -47,7 +47,7 @@ fi
 #
 
 log() {
-  echo "$@" 2>&1 | tee -a "$PM_LOG_FILE"
+  echo "$@" | tee -a "$PM_LOG_FILE"
 }
 
 failure() {
