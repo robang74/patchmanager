@@ -1,4 +1,10 @@
 #!/bin/bash
+
+source $(dirname $0)/pm_patch.env remove
+exit $?
+
+###############################################################################
+
 set -o pipefail
 #
 # Some constants
