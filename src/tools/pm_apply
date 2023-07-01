@@ -72,9 +72,6 @@ test_if_applied() {
   log "----------------------------------"
   log
   $PATCH_EXEC -R -p 1 -d "$ROOT_DIR" --dry-run < "$PATCH_FILE" 2>&1 | tee -a "$PM_LOG_FILE"
-  if [ $? -eq 0 ]; then
-    success
-  fi
 }
 
 # For details see issue #71: https://github.com/sailfishos-patches/patchmanager/issues/71
@@ -230,7 +227,7 @@ fi
 
 [ -n "$MANGLE_CANDIDATES" ] && mangle_libpath
 
-test_if_applied
+test_if_applied && success
 
 verify_text_patch
 
