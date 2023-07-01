@@ -66,16 +66,14 @@ success() {
   exit 0
 }
 
-verify_text_patch() {
-  if [ -f "$PATCH_FILE" ]; then
-    log
-    log "----------------------------------"
-    log "Dry running patch file"
-    log "----------------------------------"
-    log
-
-    $PATCH_EXEC -R -p 1 -d "$ROOT_DIR" --dry-run < "$PATCH_FILE" 2>&1 | tee -a "$PM_LOG_FILE"
-  fi
+test_if_applied() {
+  test -f "$PATCH_FILE" || return 1
+  log
+  log "----------------------------------"
+  log "Test if already applied patch"
+  log "----------------------------------"
+  log
+  $PATCH_EXEC -R -p 1 -d "$ROOT_DIR" --dry-run < "$PATCH_FILE" 2>&1 | tee -a "$PM_LOG_FILE"
 }
 
 remove_text_patch() {
@@ -145,7 +143,7 @@ fi
 # The main function that controls all the magic stuff
 #
 
-verify_text_patch
+test_if_applied
 
 remove_text_patch
 

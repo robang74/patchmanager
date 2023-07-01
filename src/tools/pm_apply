@@ -34,6 +34,8 @@ ROOT_DIR="/tmp/patchmanager"
 # Applications
 PATCH_EXEC="/usr/bin/patch"
 
+  PATCH_FILE="$PATCH_PATH"
+
 #
 # Here starts the part where all the magic happens
 #
@@ -63,24 +65,21 @@ success() {
 }
 
 test_if_applied() {
-  if [ -f "$PATCH_PATH" ]; then
-    log
-    log "----------------------------------"
-    log "Test if already applied patch"
-    log "----------------------------------"
-    log
-
-    $PATCH_EXEC -R -p 1 -d "$ROOT_DIR" --dry-run < "$PATCH_PATH" 2>&1 | tee -a "$PM_LOG_FILE"
-
-    if [ $? -eq 0 ]; then
-      success
-    fi
+  test -f "$PATCH_FILE" || return 1
+  log
+  log "----------------------------------"
+  log "Test if already applied patch"
+  log "----------------------------------"
+  log
+  $PATCH_EXEC -R -p 1 -d "$ROOT_DIR" --dry-run < "$PATCH_FILE" 2>&1 | tee -a "$PM_LOG_FILE"
+  if [ $? -eq 0 ]; then
+    success
   fi
 }
 
 # For details see issue #71: https://github.com/sailfishos-patches/patchmanager/issues/71
 mangle_libpath() {
-  if [ -f "$PATCH_PATH" ]; then
+  if [ -f "$PATCH_FILE" ]; then
     log
     log "----------------------------------"
     [ $SYS_BITNESS -eq 32 ] && log "Checking paths for 32-bit --> 64-bit conversion"
@@ -101,7 +100,7 @@ mangle_libpath() {
     sedcmd=""
     # look for lines to convert, if some are found add pattern to sed scriptlet
     for p in $candidates; do
-      cand_lines=$(grep -c "^+++ [^/]*$p" "$PATCH_PATH")
+      cand_lines=$(grep -c "^+++ [^/]*$p" "$PATCH_FILE")
       if [ $cand_lines -eq 0 ]; then
         continue  # nothing found, try next
       fi
@@ -131,7 +130,7 @@ mangle_libpath() {
 
       # create mangled patch file and add a note to it
       printf '#\n# Patch converted to %sbit library paths from its original by Patchmanager > 3.1\n# Date: %s\n#\n' $SYS_BITNESS $(date -Iseconds) \
-      | cat - "$PATCH_PATH" | sed "$sedcmd" > "$patch_edited_path"  # patch the Patch
+      | cat - "$PATCH_FILE" | sed "$sedcmd" > "$patch_edited_path"  # patch the Patch
       if [ $? -ne 0 ]; then
         failure
       fi
@@ -140,20 +139,20 @@ mangle_libpath() {
       log "OK, converted $found library path references and created: $patch_edited_path"
       log
       # set the patch path to the new one:
-      PATCH_PATH="$patch_edited_path"
+      PATCH_FILE="$patch_edited_path"
     fi
   fi
 }
 
 verify_text_patch() {
-  if [ -f "$PATCH_PATH" ]; then
+  if [ -f "$PATCH_FILE" ]; then
     log
     log "----------------------------------"
     log "Dry running patch file"
     log "----------------------------------"
     log
 
-    $PATCH_EXEC -p 1 -d "$ROOT_DIR" --dry-run < "$PATCH_PATH" 2>&1 | tee -a "$PM_LOG_FILE"
+    $PATCH_EXEC -p 1 -d "$ROOT_DIR" --dry-run < "$PATCH_FILE" 2>&1 | tee -a "$PM_LOG_FILE"
     if [ $? -ne 0 ]; then
       failure
     fi
@@ -161,7 +160,7 @@ verify_text_patch() {
 }
 
 install_text_patch() {
-  if [ -f "$PATCH_PATH" ]; then
+  if [ -f "$PATCH_FILE" ]; then
     log
     log "----------------------------------"
     log "Applying patch file"
@@ -180,7 +179,7 @@ create_backup_patch() {
   log
 
   mkdir -p "$PM_PATCH_BACKUP_DIR" > /dev/null 2>&1
-  # Backup the original patch file, NOT $PATCH_PATH, which might be altered by 32-/64-bit mangling in line 143.
+  # Backup the original patch file, NOT $PATCH_FILE, which might be altered by 32-/64-bit mangling in line 143.
   # If mangling was performed successfully, it already wrote its patched $PATCH_EDITED_NAME to $PM_PATCH_BACKUP_DIR in line 134.
   cp -f "$PATCH_DIR/$PATCH_NAME" "$PM_PATCH_BACKUP_DIR" > /dev/null 2>&1
   log "Created backup: $PM_PATCH_BACKUP_DIR"
@@ -221,9 +220,9 @@ if [ ! -x "$PATCH_EXEC" ]; then
   failure
 fi
 
-log "Using patch file: $PATCH_PATH"
+log "Using patch file: $PATCH_FILE"
 
-if [ ! -f "$PATCH_PATH" ]; then
+if [ ! -f "$PATCH_FILE" ]; then
   log "ERROR: Cannot find patch file!"
   failure
 fi
