@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source $(dirname $0)/pm_patch.env remove
+source $(dirname $0)/pm_patch.env unapply "$@"
 exit $?
 
 ###############################################################################
