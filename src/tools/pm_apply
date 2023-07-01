@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source $(dirname $0)/pm_patch.env apply "$@"
+/bin/bash $(dirname $0)/pm_patch.env apply "$@"
 exit $?
 
 ###############################################################################
