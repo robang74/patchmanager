@@ -70,7 +70,7 @@ verify_text_patch() {
   if [ -f "$PATCH_FILE" ]; then
     log
     log "----------------------------------"
-    log "Dry running patch"
+    log "Dry running patch file"
     log "----------------------------------"
     log
 
