@@ -1,159 +1,19 @@
 #!/bin/bash
 
-/bin/bash $(dirname $0)/pm_patch.env unapply "$@"
-exit $?
+# TODO: hard-shutdown should trigger restore otherwise a
+#       patch permanently applied to the filesystem can
+#       break the next reboot in such a way the end-user
+#       cannot repair it without technical assistence
+#PM_ROOT_DIR="/"
 
-###############################################################################
+source $(dirname $0)/pm_patch.env unapply "$@" 2>&1 || exit 1
 
-set -o pipefail
-#
-# Some constants
-#
-
-# Root
-PM_VAR_DIR="/tmp/patchmanager3"
-PATCH_ROOT_DIR="/usr/share/patchmanager/patches"
-
-# Paths / Files
-PARAMETER="$1"
-PATCH_DIR="$PATCH_ROOT_DIR/$1"
-
-PM_LOG_FILE="$PM_VAR_DIR/patchmanager.log"
-PM_PATCH_BACKUP_ROOT_DIR="$PM_VAR_DIR/patches"
-PM_PATCH_BACKUP_DIR="$PM_PATCH_BACKUP_ROOT_DIR/$1"
-
-SYS_BITNESS=$(/usr/bin/getconf LONG_BIT)
-
-# Constants
-PATCH_NAME="unified_diff.patch"
-PATCH_PATH="$PATCH_DIR/$PATCH_NAME"
-PATCH_BACKUP="$PM_PATCH_BACKUP_DIR/$PATCH_NAME"
-PATCH_EDITED_NAME="unified_diff_${SYS_BITNESS}bit.patch"
-PATCH_EDITED_BACKUP="$PM_PATCH_BACKUP_DIR"/"$PATCH_EDITED_NAME"
-
-ROOT_DIR="/tmp/patchmanager"
-
-# Applications
-PATCH_EXEC="/usr/bin/patch"
-
-if [ -f "$PATCH_EDITED_BACKUP" ]; then
-  PATCH_FILE="$PATCH_EDITED_BACKUP"
-elif [ -f "$PATCH_BACKUP" ]; then
-  PATCH_FILE="$PATCH_BACKUP"
-else
-  PATCH_FILE="$PATCH_PATH"
-fi
-
-#
-# Here starts the part where all the magic happens
-#
-
-#
-# Helper functions that do all the needed heavy work
-#
-
-log() {
-  echo "$@" | tee -a "$PM_LOG_FILE"
-}
-
-failure() {
-  log
-  log "*** FAILED ***"
-  log
-
-  exit 1
-}
-
-success() {
-  log
-  log "*** SUCCESS ***"
-  log
-
-  exit 0
-}
-
-test_if_applied() {
-  test -f "$PATCH_FILE" || return 1
-  log
-  log "----------------------------------"
-  log "Test if already applied patch"
-  log "----------------------------------"
-  log
-  $PATCH_EXEC -R -p 1 -d "$ROOT_DIR" --dry-run < "$PATCH_FILE" 2>&1 | tee -a "$PM_LOG_FILE"
-}
-
-remove_text_patch() {
-  test -f "$PATCH_FILE" || return 1
-  log
-  log "----------------------------------"
-  log "Reverting (unapplying) applied patch file"
-  log "----------------------------------"
-  log
-
-  $PATCH_EXEC -R -p 1 -d "$ROOT_DIR" --no-backup-if-mismatch < "$PATCH_FILE" 2>&1 | tee -a "$PM_LOG_FILE"
-}
-
-clean_backup_patch() {
-  log
-  log "----------------------------------"
-  log "Deleting backup of patch file"
-  log "----------------------------------"
-  log
-
-  rm -rf "$PM_PATCH_BACKUP_DIR" > /dev/null 2>&1
-  log "Removed backup: $PM_PATCH_BACKUP_DIR"
-  log
-}
-
-#
-# Bunch of safety checks and required initializations
-#
-
-if [ ! -f "$PM_LOG_FILE" ]; then
-  log "*** Patch-log created by pm_unapply script $(date -Iseconds) ***"
-fi
-
-log
-log "----------------------------------"
-log "pm_unapply $(date -Iseconds)"
-log "----------------------------------"
-log
-
-if [ -z "$PARAMETER" ]; then
-  log "ERROR: A parameter must be provided for the pm_unapply script!"
-  failure
-fi
-
-if [ ! -d "$PATCH_DIR" ]; then
-  log "ERROR: $PATCH_DIR is not a directory or does not exist!"
-  failure
-fi
-
-log "$(basename "$PATCH_DIR")"
-log
-
-if [ ! -x "$PATCH_EXEC" ]; then
-  log "ERROR: Cannot use patch executable ${PATCH_EXEC}!"
-  failure
-fi
-
-log "Using patch file: $PATCH_FILE"
-
-if [ ! -f "$PATCH_FILE" ]; then
-  log "ERROR: Cannot find patch file!"
-  failure
-fi
-
-#
-# The main function that controls all the magic stuff
-#
-
+#                                                                 
+# The main function that controls all the magic stuff                             
+#                                              
+                                                                               
+safety_check_patch
 test_if_applied
-
 remove_text_patch
-
 clean_backup_patch
-
 success
-
-exit 0
