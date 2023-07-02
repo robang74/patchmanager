@@ -1666,6 +1666,10 @@ void PatchManagerObject::doRefreshPatchList()
                     }
                 }
 
+/* *****************************************************************************
+ * RAF: patch -p1 works with absolute path /path and relative path new|old/path.
+ *      Bug to fix in this code: /usr/bin/newfile -> /newfile which is wrong.
+ *
                 while (!QFileInfo::exists(path) && path.count('/') > 1) {
                     path = path.mid(path.indexOf('/', 1));
                 }
@@ -1676,6 +1680,15 @@ void PatchManagerObject::doRefreshPatchList()
                         path = toPatch.mid(toPatch.indexOf('/', 1));
                     }
                 }
+ *
+ *       Bug fixing: a simple approch considers the absolute /path always fine
+ *                   and the relative new|old/path always to strip the head/.
+ *
+ */             if (!toPatch.startsWith(QChar('/'))) {
+                    path = "/" + toPatch.mid(toPatch.indexOf('/', 1));
+                }
+/* RAF: end of bugfix ******************************************************* */
+
                 if (!filesConflicts[path].contains(patchFolder)) {
                     qDebug() << Q_FUNC_INFO << "Possible conflict in: " << path;
                     filesConflicts[path].append(patchFolder);
