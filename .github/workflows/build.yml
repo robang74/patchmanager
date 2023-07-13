@@ -1,7 +1,7 @@
 name: build test and release
 
 env:
-  sfos_target: 4.5.0.19
+  sfos_target: 4.5.0.16
 
 on:
   push:
@@ -17,19 +17,19 @@ jobs:
       run: mkdir RPMS
 
     - name: Build armv7hl
-      uses: coderus/github-sfos-build@master
+      uses: robang74/github-sfos-apps-build@master
       with:
         release: ${{ env.sfos_target }}
         arch: armv7hl
 
     - name: Build i486
-      uses: coderus/github-sfos-build@master
+      uses: robang74/github-sfos-apps-build@master
       with:
         release: ${{ env.sfos_target }}
         arch: i486
 
     - name: Build aarch64
-      uses: coderus/github-sfos-build@master
+      uses: robang74/github-sfos-apps-build@master
       with:
         release: ${{ env.sfos_target }}
         arch: aarch64
