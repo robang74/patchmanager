@@ -1,10 +1,10 @@
-name: CI on Pull Request to master and patchmanager3 branches
+name: CI on pull
 
 on:
   pull_request:
     branches:
       - master
-      - patchmanager3
+      - devel
 
 jobs:
   build:
@@ -29,8 +29,8 @@ jobs:
 
     - name: Build ${{ env.ARCH }} on ${{ env.RELEASE }}
       env:
-        ARCH: aarch64
-        RELEASE: 4.5.0.19
+        ARCH: aarch64 # amd64 would be faster 2m instead of 5m
+        RELEASE: 4.5.0.16 # this is the last docker available version
       run: |
         set -x
         mkdir -p output/$RELEASE/$ARCH
