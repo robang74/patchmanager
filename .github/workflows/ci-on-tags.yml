@@ -4,6 +4,9 @@ on:
   push:
     tags:
       - '*'
+  workflow_dispatch:
+    branches:
+      - devel
 
 env:
   LATEST: 4.5.0.16
