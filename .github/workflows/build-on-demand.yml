@@ -1,48 +1,38 @@
-name: CI on demand
+name: build on demand
 
 env:
-  sfos_target: 4.5.0.16
+  SFOS_RELEASE: 4.5.0.16
 
 on:
   workflow_dispatch:
     branches:
-      - devel
-#  push:
-#    tags:
-#      - '0.0.0'
+    - default
 
 jobs:
   build:
     runs-on: ubuntu-20.04
-
+    env:
+      SEGMENT_DOWNLOAD_TIMEOUT_MINS: 2
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v3
 
     - name: Prepare
-      run: mkdir RPMS
+      run: mkdir -p RPMS
 
     - name: ARM64 build for ${{ env.ARCH }} on ${{ env.RELEASE }}
+      env:
+        ARCH: aarch64
+        RELEASE: ${{ env.SFOS_RELEASE }}
       uses: robang74/github-sfos-apps-build@master
       with:
-        release: ${{ env.sfos_target }}
-        arch: aarch64
+        release: ${{ env.RELEASE }}
+        arch: ${{ env.ARCH }}
 
-#    - name: ARMv7 build for ${{ env.ARCH }} on ${{ env.RELEASE }}
-#      uses: robang74/github-sfos-apps-build@master
-#      with:
-#        release: ${{ env.sfos_target }}
-#        arch: armv7hl
-
-#    - name: AMDv4 build for ${{ env.ARCH }} on ${{ env.RELEASE }}
-#      uses: robang74/github-sfos-apps-build@master
-#      with:
-#        release: ${{ env.sfos_target }}
-#        arch: i486
-
-    - name: Upload build result
+    - name: Upload build results
       uses: actions/upload-artifact@v3
       with:
-        name: rpm-build-result
+        name: RPMS build results
         path: RPMS
 
     - name: Create release
@@ -57,3 +47,4 @@ jobs:
         hub release create "${assets[@]}" -m "$tag_name" "$tag_name"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
