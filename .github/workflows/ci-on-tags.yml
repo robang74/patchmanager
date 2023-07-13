@@ -32,7 +32,7 @@ jobs:
     #    path: $GITHUB_WORKSPACE/…
     #    key: cache
 
-    - name: Build ${{ env.ARCH }} on ${{ env.RELEASE }}
+    - name: ARM64 build for ${{ env.ARCH }} on ${{ env.RELEASE }}
       env:
         ARCH: aarch64
         RELEASE: ${{ env.LATEST }}
@@ -46,7 +46,7 @@ jobs:
            mb2 -t SailfishOS-$1-$2 build -d
            sudo cp -r RPMS/. /share/output/$1/$2/' sh_mb2 $RELEASE $ARCH
 
-    - name: Build ${{ env.ARCH }} on ${{ env.RELEASE }}
+    - name: ARMv7 build for ${{ env.ARCH }} on ${{ env.RELEASE }}
       env:
         ARCH: armv7hl
         RELEASE: ${{ env.LATEST }}
@@ -60,7 +60,7 @@ jobs:
            mb2 -t SailfishOS-$1-$2 build -d
            sudo cp -r RPMS/. /share/output/$1/$2/' sh_mb2 $RELEASE $ARCH
 
-    - name: Build ${{ env.ARCH }} on ${{ env.RELEASE }}
+    - name: AMDv4 build for ${{ env.ARCH }} on ${{ env.RELEASE }}
       env:
         ARCH: i486
         RELEASE: ${{ env.LATEST }}
