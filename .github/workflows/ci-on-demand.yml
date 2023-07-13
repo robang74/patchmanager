@@ -21,19 +21,19 @@ jobs:
     - name: Prepare
       run: mkdir RPMS
 
-#    - name: Build armv7hl
+#    - name: Build ${{ env.ARCH }} on ${{ env.RELEASE }}
 #      uses: robang74/github-sfos-apps-build@master
 #      with:
 #        release: ${{ env.sfos_target }}
 #        arch: armv7hl
 
-#    - name: Build i486
+#    - name: Build ${{ env.ARCH }} on ${{ env.RELEASE }}
 #      uses: robang74/github-sfos-apps-build@master
 #      with:
 #        release: ${{ env.sfos_target }}
 #        arch: i486
 
-    - name: Build aarch64
+    - name: Build ${{ env.ARCH }} on ${{ env.RELEASE }}
       uses: robang74/github-sfos-apps-build@master
       with:
         release: ${{ env.sfos_target }}
