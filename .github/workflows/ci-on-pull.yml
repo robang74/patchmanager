@@ -8,6 +8,9 @@ on:
     branches:
       - devel
 
+env:
+  LATEST: 4.5.0.16
+
 jobs:
   build:
     runs-on: ubuntu-22.04
@@ -31,8 +34,8 @@ jobs:
 
     - name: ARM64 build for ${{ env.ARCH }} on ${{ env.RELEASE }}
       env:
-        ARCH: aarch64 # amd64 would be faster 2m instead of 5m
-        RELEASE: 4.5.0.16 # this is the last docker available version
+        ARCH: aarch64
+        RELEASE: ${{ env.LATEST }}
       run: |
         set -x
         mkdir -p output/$RELEASE/$ARCH
