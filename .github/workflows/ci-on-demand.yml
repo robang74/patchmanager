@@ -21,23 +21,23 @@ jobs:
     - name: Prepare
       run: mkdir RPMS
 
-#    - name: Build ${{ env.ARCH }} on ${{ env.RELEASE }}
+    - name: ARM64 build for ${{ env.ARCH }} on ${{ env.RELEASE }}
+      uses: robang74/github-sfos-apps-build@master
+      with:
+        release: ${{ env.sfos_target }}
+        arch: aarch64
+
+#    - name: ARMv7 build for ${{ env.ARCH }} on ${{ env.RELEASE }}
 #      uses: robang74/github-sfos-apps-build@master
 #      with:
 #        release: ${{ env.sfos_target }}
 #        arch: armv7hl
 
-#    - name: Build ${{ env.ARCH }} on ${{ env.RELEASE }}
+#    - name: AMDv4 build for ${{ env.ARCH }} on ${{ env.RELEASE }}
 #      uses: robang74/github-sfos-apps-build@master
 #      with:
 #        release: ${{ env.sfos_target }}
 #        arch: i486
-
-    - name: Build ${{ env.ARCH }} on ${{ env.RELEASE }}
-      uses: robang74/github-sfos-apps-build@master
-      with:
-        release: ${{ env.sfos_target }}
-        arch: aarch64
 
     - name: Upload build result
       uses: actions/upload-artifact@v3
