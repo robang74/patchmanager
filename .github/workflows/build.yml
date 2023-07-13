@@ -1,0 +1,4 @@
+uses: robang74/github-sfos-apps-build@master
+    with:
+      release: 4.5.0.19
+      arch: aarch64
