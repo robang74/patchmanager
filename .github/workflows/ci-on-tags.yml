@@ -6,7 +6,7 @@ on:
       - '*'
 
 env:
-  LATEST: 4.5.0.16
+  LATEST: 4.5.0.19
 
 jobs:
   build:
@@ -71,53 +71,53 @@ jobs:
            mb2 -t SailfishOS-$1-$2 build -d
            sudo cp -r RPMS/. /share/output/$1/$2/' sh_mb2 $RELEASE $ARCH
 
-    - name: Build ${{ env.ARCH }} on ${{ env.RELEASE }}
-      env:
-        ARCH: aarch64
-        RELEASE: 4.0.1.45
-      run: |
-        set -x
-        mkdir -p output/$RELEASE/$ARCH
-        docker run --rm -v $PWD:/share coderus/sailfishos-platform-sdk:$RELEASE /bin/sh -xc '
-           mkdir -p build
-           cd build
-           cp -r /share/. .
-           mb2 -t SailfishOS-$1-$2 build -d
-           sudo cp -r RPMS/. /share/output/$1/$2/' sh_mb2 $RELEASE $ARCH
+#   - name: Build ${{ env.ARCH }} on ${{ env.RELEASE }}
+#     env:
+#       ARCH: aarch64
+#       RELEASE: 4.0.1.45
+#     run: |
+#       set -x
+#       mkdir -p output/$RELEASE/$ARCH
+#       docker run --rm -v $PWD:/share coderus/sailfishos-platform-sdk:$RELEASE /bin/sh -xc '
+#          mkdir -p build
+#          cd build
+#          cp -r /share/. .
+#          mb2 -t SailfishOS-$1-$2 build -d
+#          sudo cp -r RPMS/. /share/output/$1/$2/' sh_mb2 $RELEASE $ARCH
 
-    - name: Build ${{ env.ARCH }} on ${{ env.RELEASE }}
-      env:
-        ARCH: armv7hl
-        RELEASE: 3.4.0.24
-      run: |
-        set -x
-        mkdir -p output/$RELEASE/$ARCH
-        docker run --rm -v $PWD:/share coderus/sailfishos-platform-sdk:$RELEASE /bin/sh -xc '
-           mkdir -p build
-           cd build
-           cp -r /share/. .
-           mb2 -t SailfishOS-$1-$2 build -d
-           sudo cp -r RPMS/. /share/output/$1/$2/' sh_mb2 $RELEASE $ARCH
+#   - name: Build ${{ env.ARCH }} on ${{ env.RELEASE }}
+#     env:
+#       ARCH: armv7hl
+#       RELEASE: 3.4.0.24
+#     run: |
+#       set -x
+#       mkdir -p output/$RELEASE/$ARCH
+#       docker run --rm -v $PWD:/share coderus/sailfishos-platform-sdk:$RELEASE /bin/sh -xc '
+#          mkdir -p build
+#          cd build
+#          cp -r /share/. .
+#          mb2 -t SailfishOS-$1-$2 build -d
+#          sudo cp -r RPMS/. /share/output/$1/$2/' sh_mb2 $RELEASE $ARCH
 
-    - name: Build ${{ env.ARCH }} on ${{ env.RELEASE }}
-      env:
-        ARCH: i486
-        RELEASE: 3.4.0.24
-      run: |
-        set -x
-        mkdir -p output/$RELEASE/$ARCH
-        docker run --rm -v $PWD:/share coderus/sailfishos-platform-sdk:$RELEASE /bin/sh -xc '
-           mkdir -p build
-           cd build
-           cp -r /share/. .
-           mb2 -t SailfishOS-$1-$2 build -d
-           sudo cp -r RPMS/. /share/output/$1/$2/' sh_mb2 $RELEASE $ARCH
-
-    - name: Upload build results
-      uses: actions/upload-artifact@v3
-      with:
-        name: RPM-build-results
-        path: output/
+#   - name: Build ${{ env.ARCH }} on ${{ env.RELEASE }}
+#     env:
+#       ARCH: i486
+#       RELEASE: 3.4.0.24
+#     run: |
+#       set -x
+#       mkdir -p output/$RELEASE/$ARCH
+#       docker run --rm -v $PWD:/share coderus/sailfishos-platform-sdk:$RELEASE /bin/sh -xc '
+#          mkdir -p build
+#          cd build
+#          cp -r /share/. .
+#          mb2 -t SailfishOS-$1-$2 build -d
+#          sudo cp -r RPMS/. /share/output/$1/$2/' sh_mb2 $RELEASE $ARCH
+#
+#   - name: Upload build results
+#     uses: actions/upload-artifact@v3
+#     with:
+#       name: RPM-build-results
+#       path: output/
 
 # Due to building two releases for each architecture, they will clobber each other,
 # when uploaded to the single directory of a GITHUB_REF
