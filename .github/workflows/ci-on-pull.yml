@@ -29,7 +29,7 @@ jobs:
     #    path: $GITHUB_WORKSPACE/…
     #    key: cache
 
-    - name: Build ${{ env.ARCH }} on ${{ env.RELEASE }}
+    - name: ARM64 build for ${{ env.ARCH }} on ${{ env.RELEASE }}
       env:
         ARCH: aarch64 # amd64 would be faster 2m instead of 5m
         RELEASE: 4.5.0.16 # this is the last docker available version
