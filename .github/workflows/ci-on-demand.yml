@@ -4,9 +4,12 @@ env:
   sfos_target: 4.5.0.16
 
 on:
-  push:
-    tags:
-      - '0.0.0'
+  workflow_dispatch:
+    branches:
+      - devel
+#  push:
+#    tags:
+#      - '0.0.0'
 
 jobs:
   build:
